@@ -11,13 +11,28 @@ csvFile = open('output.csv', 'a')
 csvWriter = csv.writer(csvFile)
 
 cursor = tweepy.Cursor(api.search,
-                       q=" OR ".join(config.keywords),
+                       q=config.startKeyword,
                        count=100,
                        result_type="recent",
                        lang="en")
 
-for page in cursor.pages():
+
+for page in cursor.pages(1000):
     for tweet in page:
-        csvWriter.writerow([tweet.created_at, tweet.user.screen_name.encode('utf8'), tweet.text.encode('utf-8')])
+        userTweetsCursor = tweepy.Cursor(api.search,
+                               q="from:" + tweet.user.name,
+                               count=100,
+                               result_type="recent",
+                               lang="en")
+
+        score = 0
+        print(tweet.user.name)
+
+        for userPage in userTweetsCursor.pages(1000):
+            for userTweet in userPage:
+                for keyword in config.keywords:
+                    score += tweet.text.lower().count(keyword)
+
+        csvWriter.writerow([tweet.user.name.encode('utf8'), "score: " + str(score)])
 
 csvFile.close()
