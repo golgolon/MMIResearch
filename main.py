@@ -3,8 +3,8 @@ import tweepy
 import csv
 import time
 
-auth = tweepy.OAuthHandler(config.twitterConsKey, config.twitterConsSec)
-auth.set_access_token(config.twitterToken, config.twitterTokenSec)
+auth = tweepy.OAuthHandler(config.twitterConfig.twitterConsKey, config.twitterConfig.twitterConsSec)
+auth.set_access_token(config.twitterConfig.twitterToken, config.twitterConfig.twitterTokenSec)
 
 api = tweepy.API(auth)
 
@@ -31,14 +31,14 @@ for page in cursor.pages(1):
         print(tweet.user.name)
         for userPage in userTweetsCursor.pages(1):
             for userTweet in userPage:
-                if not userTweet.retweeted and 'RT @' not in userTweet.text:
-                    for keyword in config.keywords:
-                        count = tweet.text.lower().count(keyword)
-                        if (count > 0):
-                            words += ", " + keyword
-                        score += tweet.text.lower().count(keyword)
+                for keyword in config.keywords:
+                    count = tweet.text.lower().count(keyword)
+                    if (count > 0):
+                        words += ", " + keyword
+                    score += tweet.text.lower().count(keyword)
 
         csvWriter.writerow([tweet.user.screen_name.encode('utf8'), "score: " + str(score), "words: " + words])
-        time.sleep(10)
+        csvFile.flush()
+        time.sleep(5)
 
 csvFile.close()
