@@ -1,4 +1,0 @@
-twitterConsKey = "TL3diuvk5ZpcDpJlwD8W30UwC"
-twitterConsSec = "TMBoXkwxrDzVOnW3nYpgPSpcSzTJfOI7se8ek5KDh3RI8ybPXD"
-twitterToken = "702783358040989696-pFGJLQKh1y5l0IS7TyWuavCnaQVDN3P"
-twitterTokenSec = "zBOLkHp0aii64O1aQLvLCnDAuwHJSIzcEkTmZlbjnj4Gb"
