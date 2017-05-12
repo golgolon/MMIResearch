@@ -8,37 +8,21 @@ auth.set_access_token(config.twitterConfig.twitterToken, config.twitterConfig.tw
 
 api = tweepy.API(auth)
 
-csvFile = open('output.csv', 'a')
+csvFile = open('output.csv', 'a', encoding='utf8')
 csvWriter = csv.writer(csvFile)
 
 cursor = tweepy.Cursor(api.search,
-                       q=config.startKeyword,
+                       q=config.query,
                        count=100,
                        result_type="recent",
                        lang="en")
 
-
-for page in cursor.pages(1):
+for page in cursor.pages(100):
     for tweet in page:
-        userTweetsCursor = tweepy.Cursor(api.search,
-                               q="from:" + tweet.user.screen_name,
-                               count=100,
-                               result_type="recent",
-                               lang="en")
-
-        score = 0
-        words = ""
-        print(tweet.user.name)
-        for userPage in userTweetsCursor.pages(1):
-            for userTweet in userPage:
-                if 'RT @' not in userTweet.text:
-                    for keyword in config.keywords:
-                        count = userTweet.text.lower().count(keyword)
-                        if (count > 0):
-                            words += ", " + keyword
-                        score += count
-        csvWriter.writerow([tweet.user.screen_name.encode('utf8'), "score: " + str(score), "words: " + words])
-        csvFile.flush()
-        time.sleep(5)
+        if (not tweet.retweeted) and ('RT @' not in tweet.text):
+            csvWriter.writerow(["https://twitter.com/" + tweet.user.screen_name,
+                                tweet.text])
+            csvFile.flush()
+            time.sleep(1)
 
 csvFile.close()
